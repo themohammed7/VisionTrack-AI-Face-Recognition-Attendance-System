@@ -620,7 +620,7 @@ def employee_dashboard():
                         distance, _ = knn.kneighbors([embedding])
                         distance = distance[0][0]
                         
-                        if distance < 0.65:
+                        if distance < 0.59:
                             if pred_id in users: 
                                 name = users[pred_id]["name"]
                                 current_user = st.session_state.get("emp_name", "")
