@@ -368,18 +368,23 @@ face_cascade = cv2.CascadeClassifier(
 # =========================
 def extract_embedding(face):
     try:
+        # Convert to grayscale
         gray = cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
-        # ADD THIS LINE: It balances the light/shadows
+        
+        # 1. LIGHTING FIX: Histogram Equalization balances shadows and bright spots
         gray = cv2.equalizeHist(gray) 
         
-        resized = cv2.resize(gray, (128, 128))
+        # 2. DETAIL FIX: Increase resolution to 128x128 for more unique features
+        resized = cv2.resize(gray, (200, 200))
+        
+        # Flatten and Normalize
         embedding = resized.flatten().astype("float32")
         norm = np.linalg.norm(embedding)
         if norm == 0:
             return None
         embedding = embedding / norm
         return embedding.tolist()
-    except:
+    except Exception as e:
         return None
 
 # =========================
@@ -623,7 +628,7 @@ def employee_dashboard():
                         distance, _ = knn.kneighbors([embedding])
                         distance = distance[0][0]
                         
-                        if distance < 0.5:
+                        if distance < 0.6:
                             if pred_id in users: 
                                 name = users[pred_id]["name"]
                                 current_user = st.session_state.get("emp_name", "")
