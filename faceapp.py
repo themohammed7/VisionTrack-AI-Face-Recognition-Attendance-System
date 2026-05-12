@@ -390,19 +390,26 @@ def extract_embedding(face):
 # =========================
 # TRAIN KNN
 # =========================
+# =========================
+# TRAIN KNN
+# =========================
 def train_knn():
     embeddings = load_embeddings()
     if len(embeddings) == 0:
         return None
+        
     X = []
     y = []
     for uid, emb in embeddings.items():
         X.append(emb)
         y.append(uid)
+        
+    # FIX: n_neighbors MUST be exactly 1 because we only have 1 picture per user
     knn = KNeighborsClassifier(
-        n_neighbors=min(3, len(X)),
+        n_neighbors=1,
         metric='euclidean'
     )
+    
     knn.fit(X, y)
     return knn
 
@@ -628,7 +635,7 @@ def employee_dashboard():
                         distance, _ = knn.kneighbors([embedding])
                         distance = distance[0][0]
                         
-                        if distance < 0.6:
+                        if distance < 0.65:
                             if pred_id in users: 
                                 name = users[pred_id]["name"]
                                 current_user = st.session_state.get("emp_name", "")
