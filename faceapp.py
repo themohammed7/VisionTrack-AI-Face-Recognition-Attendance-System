@@ -369,7 +369,10 @@ face_cascade = cv2.CascadeClassifier(
 def extract_embedding(face):
     try:
         gray = cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
-        resized = cv2.resize(gray, (64, 64))
+        # ADD THIS LINE: It balances the light/shadows
+        gray = cv2.equalizeHist(gray) 
+        
+        resized = cv2.resize(gray, (128, 128))
         embedding = resized.flatten().astype("float32")
         norm = np.linalg.norm(embedding)
         if norm == 0:
